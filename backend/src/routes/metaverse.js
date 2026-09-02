@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const MetaverseCharacter = require('../models/MetaverseCharacter');
@@ -794,3 +794,4 @@ router.post('/leave', async (req, res) => {
 });
 
 module.exports = router;
+

@@ -46,7 +46,7 @@ services:
     container_name: myzubster-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - REACT_APP_API_URL=http://localhost:3010
     depends_on:
@@ -83,7 +83,7 @@ services:
     restart: unless-stopped
     environment:
       - ONION_TARGET_HOST=frontend
-      - ONION_TARGET_PORT=3000
+      - ONION_TARGET_PORT=80
     depends_on:
       - frontend
     volumes:
@@ -104,3 +104,5 @@ volumes:
 networks:
   myzubster-network:
     driver: bridge
+
+

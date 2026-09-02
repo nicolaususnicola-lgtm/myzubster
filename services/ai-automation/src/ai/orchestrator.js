@@ -1,11 +1,11 @@
-/**
+﻿/**
  * AI Orchestrator - Gestisce l'analisi degli issue con prompt engineering avanzato
  * 
  * Miglioramenti implementati:
- * - Few-shot learning per analisi più accurate
+ * - Few-shot learning per analisi piÃ¹ accurate
  * - Output JSON strutturato
  * - Analisi del sentiment
- * - Estrazione avanzata di campi (complessità, priorità, skills, ecc.)
+ * - Estrazione avanzata di campi (complessitÃ , prioritÃ , skills, ecc.)
  */
 
 class AIOrchestrator {
@@ -20,7 +20,7 @@ class AIOrchestrator {
         // Prompt base per l'analisi degli issue
         this.basePrompt = `
 Sei un assistente AI specializzato nell'analisi di issue su GitHub. 
-Il tuo compito è analizzare il testo dell'issue e restituire un'analisi strutturata.
+Il tuo compito Ã¨ analizzare il testo dell'issue e restituire un'analisi strutturata.
 
 # ISTRUZIONI
 1. Leggi attentamente il titolo e la descrizione dell'issue
@@ -80,7 +80,7 @@ Output:
 }
 
 ## Esempio 3: Documentazione
-Input: "Docs: La documentazione dell'API REST è incompleta. Mancano gli esempi per gli endpoint /users e /auth."
+Input: "Docs: La documentazione dell'API REST Ã¨ incompleta. Mancano gli esempi per gli endpoint /users e /auth."
 Output:
 {
     "type": "documentation",
@@ -105,7 +105,7 @@ Output:
 # REGOLE PER L'ANALISI
 - Severity: critical, high, medium, minor
 - Complexity: low, medium, high, very-high
-- Priority: 1 (più alta) a 5 (più bassa)
+- Priority: 1 (piÃ¹ alta) a 5 (piÃ¹ bassa)
 - Sentiment: positive, neutral, negative
 - Urgency: immediate, high, medium, low
 
@@ -117,6 +117,15 @@ Labels: {labels}
 
         // Sistema di caching per i prompt
         this.promptCache = new Map();
+    }
+
+    async start() {
+        this.running = true;
+        return true;
+    }
+
+    isRunning() {
+        return this.running === true;
     }
 
     /**
@@ -218,13 +227,13 @@ Labels: {labels}
         else if (isEnhancement) type = 'enhancement';
         else if (isDocumentation) type = 'documentation';
         
-        // Determinazione della severità
+        // Determinazione della severitÃ 
         let severity = 'medium';
         if (body.toLowerCase().includes('critical') || body.toLowerCase().includes('blocca')) severity = 'critical';
         else if (body.toLowerCase().includes('high') || body.toLowerCase().includes('grave')) severity = 'high';
         else if (body.toLowerCase().includes('minor') || body.toLowerCase().includes('piccolo')) severity = 'minor';
         
-        // Determinazione della complessità
+        // Determinazione della complessitÃ 
         let complexity = 'medium';
         if (body.split(' ').length > 100) complexity = 'high';
         else if (body.split(' ').length < 30) complexity = 'low';
@@ -269,7 +278,7 @@ Labels: {labels}
     }
 
     /**
-     * Genera raccomandazioni basate sul tipo e severità
+     * Genera raccomandazioni basate sul tipo e severitÃ 
      * @param {string} type 
      * @param {string} severity 
      * @returns {string[]}
@@ -357,7 +366,7 @@ Labels: {labels}
     _calculateConfidence(analysis, issueData) {
         let score = 0.7; // Base
         
-        // Più informazioni abbiamo, maggiore è la confidenza
+        // PiÃ¹ informazioni abbiamo, maggiore Ã¨ la confidenza
         if (issueData.body && issueData.body.length > 50) score += 0.1;
         if (issueData.labels && issueData.labels.length > 0) score += 0.1;
         if (issueData.comments && issueData.comments.length > 2) score += 0.1;
@@ -409,7 +418,7 @@ Labels: {labels}
             throw new Error('issueData deve essere un oggetto');
         }
         if (!issueData.title) {
-            throw new Error('issueData.title è richiesto');
+            throw new Error('issueData.title Ã¨ richiesto');
         }
     }
 
@@ -430,7 +439,7 @@ Labels: {labels}
     }
 
     /**
-     * Batch analysis per più issue
+     * Batch analysis per piÃ¹ issue
      * @param {Array<Object>} issues 
      * @param {number} concurrency 
      * @returns {Promise<Array<Object>>}
@@ -492,3 +501,4 @@ Labels: {labels}
 }
 
 module.exports = AIOrchestrator;
+

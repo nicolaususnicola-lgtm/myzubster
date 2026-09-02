@@ -11,6 +11,7 @@ chmod 700 "$DATA_DIR"
 
 cat > "$TORRC" <<EOF
 DataDirectory /var/lib/tor
+User debian-tor
 SocksPort 0
 Log notice stdout
 HiddenServiceDir $DATA_DIR
