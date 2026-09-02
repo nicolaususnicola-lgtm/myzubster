@@ -8,6 +8,7 @@ import MarketplaceOpsPage from './pages/MarketplaceOpsPage';
 import SocialLoginPage from './pages/SocialLoginPage';
 import ZorgaxLifePilotPage from './pages/ZorgaxLifePilotPage';
 import AppsDownloadPage from './pages/AppsDownloadPage';
+import ProfilePage from './pages/ProfilePage';
 import RobotPublicWalletPanel from './components/RobotPublicWalletPanel';
 
 const TABS = {
@@ -102,11 +103,16 @@ function App() {
     return <AppsDownloadPage />;
   }
 
+  if (path === '/profile' || path === '/profilo' || path === '/zubster') {
+    return <ProfilePage />;
+  }
+
   return (
     <div className="App">
       <nav style={{ padding: '12px 20px', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }} aria-label="MyZubster main navigation">
         <h1 style={{ margin: 0, fontSize: 20 }}>🌍 MyZubster</h1>
         <a href="/social-login" style={{ fontWeight: 900 }}>🔐 Accedi / Registrati</a>
+        <a href="/profile" style={{ fontWeight: 900 }}>✨ Profilo Zubster</a>
         <button onClick={() => setActiveTab(TABS.WORLD)}>Entra</button>
         <button onClick={() => setActiveTab(TABS.EXPLORE)}>Esplora</button>
         <button onClick={() => setActiveTab(TABS.GARDENS)}>Il mio giardino</button>
