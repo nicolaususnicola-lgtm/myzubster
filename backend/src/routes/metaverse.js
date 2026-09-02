@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const MetaverseCharacter = require('../models/MetaverseCharacter');
 const MetaversePresence = require('../models/MetaversePresence');
 const MetaverseChatMessage = require('../models/MetaverseChatMessage');
-const { optionalAuthenticate } = require('../../../src/middleware/auth');
+const { optionalAuthenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -494,7 +494,7 @@ router.get('/health', async (_req, res) => {
   }
 });
 
-router.get('/world', async (_req, res) => {
+router.get('/world', optionalAuthenticate, async (req, res) => {
   try {
     const [players, totalCharacters, verifiedCharacters] = await Promise.all([
       sharedSnapshot(),
@@ -509,7 +509,7 @@ router.get('/world', async (_req, res) => {
       totalCharacters,
       players,
       featuredCharacters: verifiedCharacters,
-      identityMode: 'guest-unverified',
+      identityMode: req.userId ? 'account-authenticated' : 'guest-unverified', user: req.userId ? { id: String(req.userId), username: cleanText(req.username, 40) || null, role: cleanText(req.userRole, 30) || 'user' } : null,
       transport: databaseAvailable() ? 'shared-polling' : 'ephemeral'
     });
   } catch (error) {
