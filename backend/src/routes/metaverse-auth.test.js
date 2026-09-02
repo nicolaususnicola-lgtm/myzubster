@@ -102,7 +102,7 @@ describe('authenticated MyZubster metaverse identity', () => {
     expect(response.body).not.toHaveProperty('messages');
   });
 
-  test('reuses the account-linked character and ignores guest identity claims', async () => {
+  test('reports the authenticated account in the world snapshot', async () => { const token = jwt.sign({ userId, username: 'daniel', role: 'user' }, process.env.JWT_SECRET); const response = await request(app).get('/api/metaverse/world').set('Authorization', `Bearer ${token}`).expect(200); expect(response.body).toMatchObject({ success: true, online: 0, identityMode: 'account-authenticated', user: { id: userId, username: 'daniel', role: 'user' } }); }); test('keeps an anonymous world snapshot guest-unverified', async () => { const response = await request(app).get('/api/metaverse/world').expect(200); expect(response.body).toMatchObject({ success: true, online: 0, identityMode: 'guest-unverified', user: null }); }); test('reuses the account-linked character and ignores guest identity claims', async () => {
     mockFindOneAndUpdate.mockResolvedValue({
       characterId: `account-${userId}`,
       displayName: 'H4x0r',
