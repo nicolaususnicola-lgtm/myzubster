@@ -509,7 +509,12 @@ router.get('/world', optionalAuthenticate, async (req, res) => {
       totalCharacters,
       players,
       featuredCharacters: verifiedCharacters,
-      identityMode: req.userId ? 'account-authenticated' : 'guest-unverified', user: req.userId ? { id: String(req.userId), username: cleanText(req.username, 40) || null, role: cleanText(req.userRole, 30) || 'user' } : null,
+      identityMode: req.userId ? 'account-authenticated' : 'guest-unverified',
+      user: req.userId ? {
+        id: String(req.userId),
+        username: cleanText(req.username, 40) || null,
+        role: cleanText(req.userRole, 30) || 'user'
+      } : null,
       transport: databaseAvailable() ? 'shared-polling' : 'ephemeral'
     });
   } catch (error) {
