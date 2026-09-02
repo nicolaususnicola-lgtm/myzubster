@@ -1,0 +1,7 @@
+{
+  "project": "MyZubster",
+  "status": "mvp-demo",
+  "profileRoute": "/profile",
+  "repository": "https://github.com/nicolaususnicola-lgtm/myzubster",
+  "purpose": "Public marker used to verify that the latest frontend bundle has actually been deployed."
+}
