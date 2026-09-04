@@ -1,4 +1,10 @@
 const mockFindOneAndUpdate = jest.fn();
+const mockFind = jest.fn(() => ({
+  select() { return this; },
+  sort() { return this; },
+  limit() { return this; },
+  lean: jest.fn().mockResolvedValue([])
+}));
 const mockDistinct = jest.fn();
 const mockCreate = jest.fn();
 const mockPresenceFindOneAndUpdate = jest.fn();
@@ -27,6 +33,7 @@ jest.mock('mongoose', () => ({
 }));
 
 jest.mock('../models/MetaverseCharacter', () => ({
+  find: mockFind,
   findOneAndUpdate: mockFindOneAndUpdate,
   distinct: mockDistinct,
   create: mockCreate
