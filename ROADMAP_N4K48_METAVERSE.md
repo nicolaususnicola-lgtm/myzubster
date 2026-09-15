@@ -3,13 +3,13 @@
 Stato: proposta operativa  
 Responsabile del profilo: N4K48 (`nicolaususnicola-lgtm`)  
 Mondo iniziale: Neon Plaza  
-Ultimo aggiornamento: 3 settembre 2026
+Ultimo aggiornamento: 15 settembre 2026
 
 ## Obiettivo
 
-Portare N4K48 da una sessione guest a un profilo Metaverse persistente e verificabile, collegato volontariamente all'account GitHub e riconosciuto dal backend MyZubster.
+Portare N4K48 da un profilo Metaverse persistente a una presenza pubblica verificabile nell'ecosistema MyZubster, collegando progressivamente **Neon Plaza, Zorgax e il pilot Nicola Comics**.
 
-La fotografia personale non blocca l'MVP: fino alla consegna del file originale viene usato un fallback grafico neutro.
+Il principio resta evidence-first: documentazione, test e demo non devono essere confusi con deployment di produzione, diritti verificati o mint on-chain.
 
 ## Legenda
 
@@ -26,13 +26,18 @@ La fotografia personale non blocca l'MVP: fino alla consegna del file originale 
 | Endpoint di autenticazione | DONE | Flusso registrazione/login individuato e verificato localmente |
 | JWT Metaverse | DONE | Middleware e chiamata autenticata implementati nel fork |
 | Repository personale | DONE | Modifiche pubblicate su `nicolaususnicola-lgtm/myzubster` |
-| Documento di progetto | DONE | Documento Word pubblicato nel repository |
 | Profilo persistente N4K48 | DONE | Creazione e recupero idempotente verificati dai test locali |
 | Login GitHub nel frontend | NEXT | Collegamento OAuth e ritorno all'applicazione |
 | Join autenticato in Neon Plaza | DONE | Identità server-side e rifiuto del downgrade a guest verificati |
-| Test automatici autenticati | DONE | 4 suite e 22 test superati localmente il 3 settembre 2026 |
+| Test automatici Metaverse | DONE | 4 suite e 22 test superati localmente il 3 settembre 2026 |
+| Nicola Comics catalog | DONE | Tre comic entry disponibili nel pilot |
+| Zorgax read-only adapter | DONE | `gallery`, `detail`, `candidate`, `next_steps` verificati manualmente nel happy path locale |
+| Base URL pubblica configurabile | DONE | `NICOLA_COMICS_BASE_URL` propagata via Docker e verificata con URL di test |
+| Deployment HTTPS Nicola Comics | NEXT | Serve endpoint pubblico separato dal PC locale |
+| Zorgax pubblico → pilot | IN PROGRESS | Coordinamento tramite issue MyZubster #1176 |
+| Rights comic 001 | BLOCKED | Stato `TO_VERIFY` finché non esiste verifica dei diritti |
+| Mint/on-chain comic 001 | PLANNED | Nessuna dichiarazione di mint senza contract/token/transaction verificabili |
 | Presenza condivisa multiutente | PLANNED | Da verificare con almeno due sessioni contemporanee |
-| Fotografia personale | BLOCKED | In attesa del file originale dal telefono; non blocca l'MVP |
 
 ## Fase 1 - Identità e accesso
 
@@ -59,7 +64,6 @@ Stato: DONE
 - [x] Creare N4K48 una sola volta e recuperarlo nei login successivi.
 - [x] Esporre solo i campi pubblici necessari.
 - [x] Usare un fallback neutro per `avatarUrl`.
-- [ ] Aggiungere la fotografia solo dopo approvazione esplicita del file originale.
 
 Criterio di completamento: dopo un nuovo login il backend restituisce lo stesso personaggio N4K48 senza duplicati.
 
@@ -76,7 +80,69 @@ Stato: DONE
 
 Criterio di completamento: N4K48 entra in Neon Plaza con identità derivata dal server e non modificabile tramite payload client.
 
-## Fase 4 - Presenza e interazioni
+## Fase 4 - Nicola Comics pilot
+
+Priorità: P0  
+Stato: DONE per il pilot locale / NEXT per il deployment pubblico
+
+- [x] Pubblicare tre comic entry nel catalogo del pilot.
+- [x] Identificare `n4k48-comic-001` come `NFT_CANDIDATE` e `PROPOSED_FOR_REVIEW`.
+- [x] Mantenere `rights_status: TO_VERIFY` finché i diritti non sono verificati.
+- [x] Mantenere contract address, token ID e transaction hash vuoti finché non esiste un mint verificato.
+- [x] Esporre `GET /api/comics`.
+- [x] Esporre `GET /api/comics/{comic_id}`.
+- [x] Esporre il bridge read-only `POST /api/zorgax/ask`.
+- [x] Supportare `gallery`, `detail`, `candidate`, `next_steps`.
+- [x] Verificare manualmente il happy path locale con API Docker healthy.
+- [ ] Rerun della suite automatica comics nell'ambiente corrente: `pytest` non è installato nel container attuale.
+
+Criterio di completamento locale: catalogo, dettaglio, candidate e next steps restituiscono dati coerenti senza mutazioni o false dichiarazioni di mint.
+
+## Fase 5 - Zorgax pubblico e deployment HTTPS
+
+Priorità: P0  
+Stato: IN PROGRESS
+
+- [x] Rendere la base URL configurabile con `NICOLA_COMICS_BASE_URL`.
+- [x] Evitare localhost hardcoded come destinazione pubblica.
+- [x] Propagare `NICOLA_COMICS_BASE_URL` nel servizio API tramite Docker Compose.
+- [x] Verificare la generazione di URL assoluti usando una URL di test.
+- [x] Documentare adapter, endpoint, action, parametri, risposte e configurazione in `docs/nicola-comics/ZORGAX.md`.
+- [x] Aprire il coordinamento nel repository pubblico MyZubster: issue #1176.
+- [ ] Scegliere/attivare hosting pubblico HTTPS per il pilot Nicola Comics.
+- [ ] Configurare eventuale autenticazione soltanto nell'ambiente di hosting.
+- [ ] Configurare nel servizio pubblico Zorgax la URL reale del pilot.
+- [ ] Mappare gli intent pubblici Zorgax alle action `gallery`, `detail`, `candidate`, `next_steps`.
+- [ ] Eseguire il test end-to-end pubblico.
+
+Criterio di completamento: Zorgax pubblico raggiunge un endpoint HTTPS del pilot ospitato separatamente dal PC locale e completa il percorso senza segreti nel repository.
+
+## Fase 6 - Test end-to-end Nicola Comics
+
+Priorità: P0 prima della pubblicazione dell'integrazione  
+Stato: NEXT
+
+Percorso da verificare:
+
+```text
+richiesta comics
+  → gallery
+  → detail/card
+  → image
+  → candidate
+  → rights status
+  → dati on-chain solo se verificati
+```
+
+- [ ] Richiesta pubblica a Zorgax.
+- [ ] Recupero gallery dal pilot HTTPS.
+- [ ] Apertura detail/card del comic.
+- [ ] Verifica URL/asset immagine.
+- [ ] Identificazione corretta del candidate.
+- [ ] Visualizzazione `TO_VERIFY` quando i diritti non sono ancora verificati.
+- [ ] Nessun `MINTED` senza transaction hash, contract e token verificabili.
+
+## Fase 7 - Presenza e interazioni Metaverse
 
 Priorità: P1  
 Stato: PLANNED
@@ -87,49 +153,35 @@ Stato: PLANNED
 - [ ] Gestire riconnessioni senza duplicare la presenza.
 - [ ] Eseguire un test con almeno due sessioni contemporanee.
 
-Criterio di completamento: entrambe le sessioni vedono uno stato coerente e il conteggio online torna corretto dopo l'uscita.
-
-## Fase 5 - Sicurezza, privacy e qualità
+## Fase 8 - Sicurezza, privacy e qualità
 
 Priorità: P0 prima del rilascio  
 Stato: IN PROGRESS
 
 - [x] Non pubblicare `JWT_SECRET`, token completi o file `.env`.
-- [x] Mantenere la fotografia personale fuori dal repository finché non è approvata.
+- [x] Non inserire token/segreti del pilot nel repository.
 - [x] Aggiungere test automatici per autenticazione, world e join.
-- [x] Eseguire la suite mirata: 4 suite e 22 test superati.
+- [x] Eseguire la suite Metaverse mirata: 4 suite e 22 test superati.
+- [ ] Rendere nuovamente disponibile `pytest` nell'ambiente comics e rieseguire la suite automatica.
 - [ ] Verificare che log e risposte siano sanitizzati.
 - [ ] Documentare revoca del collegamento GitHub.
-- [ ] Definire moderazione e rimozione delle immagini pubbliche.
-- [ ] Eseguire smoke test nell'ambiente scelto.
+- [ ] Eseguire smoke test nell'ambiente pubblico scelto.
 
-Criterio di completamento: test verdi, nessun segreto nei log o nel repository e procedura di rollback documentata.
+## Sequenza consigliata aggiornata
 
-## Fase 6 - Demo e rilascio controllato
+1. Pubblicare il pilot Nicola Comics su un endpoint HTTPS separato dal PC locale.
+2. Configurare la URL reale tramite `NICOLA_COMICS_BASE_URL` nell'hosting.
+3. Concordare/configurare auth e mapping nel Zorgax pubblico tramite issue #1176.
+4. Eseguire l'end-to-end Zorgax → gallery → detail → candidate → rights/on-chain.
+5. Ripristinare `pytest` nell'ambiente comics e rieseguire la suite automatica.
+6. Proseguire con GitHub OAuth e test multiutente Neon Plaza.
+7. Chiudere controlli di sicurezza/privacy e preparare una demo controllata.
 
-Priorità: P1  
-Stato: PLANNED
+## Verifiche registrate
 
-- [ ] Scegliere ambiente demo o staging.
-- [ ] Configurare variabili segrete soltanto nel provider di deployment.
-- [ ] Attivare health check e monitoraggio essenziale.
-- [ ] Pubblicare una demo riproducibile.
-- [ ] Raccogliere feedback senza dichiarare adozione o partnership non dimostrate.
+### Metaverse — 3 settembre 2026
 
-Criterio di completamento: la demo è raggiungibile, monitorata e riproducibile; eventuali limiti sono dichiarati chiaramente.
-
-## Sequenza consigliata
-
-1. Pubblicare e integrare le correzioni locali che rendono pulita la suite autenticata.
-2. Collegare il login GitHub nel frontend.
-3. Eseguire test con due sessioni e verificare `online`.
-4. Chiudere i controlli di sicurezza e privacy.
-5. Preparare una demo controllata.
-6. Inserire la fotografia originale quando sarà disponibile.
-
-## Ultima verifica automatica
-
-Eseguita localmente il 3 settembre 2026 sul ramo `main`:
+Eseguita localmente sul ramo `main`:
 
 - `backend/src/routes/metaverse-auth.test.js`
 - `backend/src/routes/metaverse.test.js`
@@ -138,25 +190,41 @@ Eseguita localmente il 3 settembre 2026 sul ramo `main`:
 
 Risultato: **4 suite superate, 22 test superati, 0 test falliti**.
 
-La verifica copre snapshot autenticato del mondo, distinzione guest/account, riutilizzo del personaggio collegato, rifiuto dei token non validi e collegamento dell'interfaccia. Il test multiutente reale e lo smoke test in staging restano attività separate prima del rilascio pubblico dell'MVP.
+### Nicola Comics — 15 settembre 2026
 
-## Definition of Done dell'MVP
+Verifica manuale locale con Docker:
 
-L'MVP è completato quando:
+- API healthy.
+- Gallery: PASS.
+- Detail comic 001: PASS.
+- Candidate: PASS.
+- Next steps: PASS.
+- `n4k48-comic-001`: `NFT_CANDIDATE`, `PROPOSED_FOR_REVIEW`, rights `TO_VERIFY`.
+- Nessun token ID o transaction hash dichiarato.
+- Base URL configurabile verificata tramite Docker con una URL di test; `detail_url` diventa assoluta correttamente.
 
-- N4K48 accede con un account verificato;
-- il backend restituisce il profilo persistente corretto;
-- `identityMode` distingue chiaramente account e guest;
-- Neon Plaza mostra una presenza condivisa coerente;
+La suite `pytest` comics **non è stata rieseguita nell'ambiente corrente** perché il modulo/comando pytest non è disponibile. Questo limite resta esplicitamente separato dalla verifica manuale happy-path.
+
+## Definition of Done aggiornata
+
+L'integrazione N4K48/MyZubster raggiunge il prossimo livello quando:
+
+- N4K48 mantiene identità persistente e autenticata;
+- Neon Plaza distingue chiaramente account e guest;
+- Nicola Comics è raggiungibile tramite HTTPS pubblico;
+- Zorgax pubblico può leggere gallery, detail, candidate e next steps;
+- i diritti sono mostrati come verificati solo quando esiste evidenza;
+- lo stato NFT/on-chain è mostrato solo con prove verificabili;
 - token, segreti e dati privati non compaiono nei log o nel repository;
-- i test automatici e lo smoke test principale risultano superati;
-- in assenza della fotografia viene mostrato un fallback neutro.
+- test automatici e smoke test dell'ambiente pubblico risultano superati.
 
 ## Decisioni aperte
 
-- Ambiente iniziale: demo locale, staging o produzione.
+- Provider/URL HTTPS per il pilot Nicola Comics.
+- Autenticazione richiesta tra Zorgax pubblico e pilot.
+- Mapping definitivo degli intent Zorgax.
+- Data e ambiente del test end-to-end pubblico.
 - Provider e configurazione OAuth GitHub.
-- Modello definitivo del personaggio e URL pubblico degli asset.
-- Durata della presenza online e strategia di heartbeat.
-- Politica di revoca, moderazione e sostituzione dell'immagine personale.
-
+- Strategia di presenza multiutente e heartbeat in Neon Plaza.
+- Processo di verifica dei diritti del comic 001.
+- Eventuale processo di mint solo dopo verifica dei diritti e disponibilità di prove on-chain.
